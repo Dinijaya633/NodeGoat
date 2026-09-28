@@ -1,0 +1,17 @@
+rules:
+  - id: nosql-injection-where-interpolation
+    languages: [javascript]
+    severity: ERROR
+    message: >
+      User-controlled input is interpolated directly into a MongoDB $where
+      clause. This allows NoSQL injection (CWE-943). Use parseInt() or
+      strict type validation before building the query.
+    metadata:
+      cwe:
+        - "CWE-943: Improper Neutralization of Special Elements in Data Query Logic"
+      owasp:
+        - "A1:2017 - Injection"
+      references:
+        - https://owasp.org/www-project-nodejs-goat/
+    patterns:
+      - pattern-regex: "\\$where:.*'\\$\\{[^}]+\\}'"
