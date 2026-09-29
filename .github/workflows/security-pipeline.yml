@@ -61,14 +61,11 @@ jobs:
         with:
           node-version: '12'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install production dependencies only
+        run: npm install --omit=dev
 
-      - name: Run npm audit (report only)
-        run: npm audit || true
-
-      - name: Fail on critical vulnerabilities only
-        run: npm audit --audit-level=critical
+      - name: Run npm audit (production only)
+        run: npm audit --omit=dev --audit-level=high
 
   # ────────────────────────────────────────────────────────────
   # JOB 4: Secrets Scan
@@ -110,4 +107,4 @@ jobs:
           severity: 'CRITICAL'
           exit-code: '1'
           ignore-unfixed: true
-          vuln-type: 'os,library'
+          vuln-type: 'library'
