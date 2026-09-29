@@ -9,10 +9,26 @@ function ResearchHandler(db) {
 
     const researchDAO = new ResearchDAO(db);
 
-    this.displayResearch = (req, res) => {
+        this.displayResearch = (req, res) => {
 
         if (req.query.symbol) {
-            const url = req.query.url + req.query.symbol;
+            // Fix for A10 - SSRF - validate url against allowlist before fetching
+            const allowedHosts = ["finance.yahoo.com"];
+            const userUrl = req.query.url;
+
+            let parsedUrl;
+            try {
+                parsedUrl = new URL(userUrl);
+            } catch (e) {
+                return res.status(400).send("Invalid URL");
+            }
+
+            if (!allowedHosts.includes(parsedUrl.hostname)) {
+                return res.status(400).send("URL not permitted");
+            }
+
+            const url = userUrl + encodeURIComponent(req.query.symbol);
+
             return needle.get(url, (error, newResponse, body) => {
                 if (!error && newResponse.statusCode === 200) {
                     res.writeHead(200, {
@@ -32,7 +48,6 @@ function ResearchHandler(db) {
             environmentalScripts
         });
     };
-
 }
 
 module.exports = ResearchHandler;
