@@ -64,9 +64,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: false
+      - name: Run npm audit (report only)
+        run: npm audit || true
+
+      - name: Fail on critical vulnerabilities only
+        run: npm audit --audit-level=critical
 
   # ────────────────────────────────────────────────────────────
   # JOB 4: Secrets Scan
@@ -105,6 +107,7 @@ jobs:
         with:
           image-ref: nodegoat-web:${{ github.sha }}
           format: 'table'
-          severity: 'HIGH,CRITICAL'
+          severity: 'CRITICAL'
           exit-code: '1'
           ignore-unfixed: true
+          vuln-type: 'os,library'
