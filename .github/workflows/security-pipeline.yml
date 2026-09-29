@@ -13,6 +13,9 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
+    env:
+      COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+      CRYPTO_KEY: ${{ secrets.CRYPTO_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
